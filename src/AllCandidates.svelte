@@ -11,7 +11,7 @@
     // create a list of candidates for a party
 	let party_candidates = function(party, district) {
 		return items.candidates.filter(
-			item => item["party"].indexOf(party) !== -1 && item["district"].indexOf(district) !== -1
+			item => item["party"] !== null && item["party"].indexOf(party) !== -1 && item["district"].indexOf(district) !== -1
 		)
 	}
 
@@ -53,7 +53,7 @@
         {#if district.blurb}
             <p>{@html district.blurb}</p>
         {/if}
-        {#each district_candidate_parties(district_candidates(district[district])) as party, key}
+        {#each district_candidate_parties(district_candidates(district["district"])) as party, key}
             {#if party_candidates(party, district.district).length > 0}
                 <section class="m-archive m-archive-homepage m-zone m-zone-homepage-more-top candidates-list">
                     <h3 class="m-archive-header party-{district_candidate_parties(district_candidates(district["district"]))[key].toLowerCase()}">{party}</h3>

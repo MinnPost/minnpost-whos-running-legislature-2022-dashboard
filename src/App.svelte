@@ -122,8 +122,8 @@
 		let districts = searchResults(searchTerm, items.districts);
 		let candidates = searchResults(searchTerm, items.candidates);
 
-		let active_candidates = matchResults("dropped-out", false, candidates);
-		let dropped_out_candidates = matchResults("dropped-out", true, candidates);
+		let active_candidates = matchResults("dropped-out?", false, candidates);
+		let dropped_out_candidates = matchResults("dropped-out?", true, candidates);
 		if (showDroppedOutCandidates == true) {
 			candidates = active_candidates.concat(dropped_out_candidates);
 		} else {
@@ -132,7 +132,7 @@
 
 		// create array of race ids, parties, and party ids
 		let all_chambers = [...new Set(items.candidates.map(function(item, index) {
-			if ( item["district"].toString().indexOf("A") >= 0 || item["district"].toString().indexOf("B") ) {
+			if ( item["district"].indexOf("A") >= 0 || item["district"].indexOf("B") ) {
 				return "house"
 			} else {
 				return "senate"
