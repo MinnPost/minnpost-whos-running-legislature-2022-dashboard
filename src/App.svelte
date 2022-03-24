@@ -118,9 +118,8 @@
 	// create the promise result
 	let searchTerm = '';
 	$: filteredList = dataPromise.then((r) => {
-
 		// filter the races and/or candidates by the search term
-		let races = searchResults(searchTerm, items.races);
+		let districts = searchResults(searchTerm, items.districts);
 		let candidates = searchResults(searchTerm, items.candidates);
 
 		let active_candidates = matchResults("dropped-out", false, candidates);
@@ -132,25 +131,32 @@
 		}
 
 		// create array of race ids, parties, and party ids
-		let all_race_ids = [...new Set(items.candidates.map(item => item["race-id"]))];
+		let all_chambers = [...new Set(items.candidates.map(function(item, index) {
+			if ( item["district"].toString().indexOf("A") >= 0 || item["district"].toString().indexOf("B") ) {
+				return "house"
+			} else {
+				return "senate"
+			}
+		}))];
+		let all_districts = [...new Set(items.candidates.map(item => item["district"]))];
 		let all_parties = [...new Set(items.candidates.map(item => item.party))];
 		let all_party_ids = [...new Set(items.candidates.map(item => item["party-id"]))];
 
 		// if there are no races but there are candidates, get the key from the candidate
 		// then get the corresponding race and push it
 		// after the loop, we still need to assign races to races
-		if (races.length === 0 && candidates.length !== 0) {
+		if (districts.length === 0 && candidates.length !== 0) {
 			candidates.forEach(async function(candidate) {
 				//let candidate_race = items.races[candidate["race-key"]]
-				let candidate_race = items.races.find(item => item["office-id"] === candidate["race-id"]);
-				races.push(candidate_race);
+				let candidate_district = items.districts.find(item => item["district"] === candidate["district"]);
+				races.push(candidate_district);
 			});
 			races = races;
 		}
 
 		// make the final data array of races and candidates, and parties and offices, for filteredList to use and return it
 		let data = [];
-		data["prefilteredRaces"] = items.races; // we need this for when there are no candidate results
+		data["prefilteredRaces"] = items.districts; // we need this for when there are no candidate results
 		if ( typeof all_parties !== "undefined" ) {
 			data["all_parties"] = all_parties;
 		}
@@ -169,23 +175,23 @@
 			});
 			data["party_select"] = party_select;
 		}
-		if ( typeof races !== "undefined" ) {
-			data["races"] = races;
+		if ( typeof districts !== "undefined" ) {
+			data["districts"] = districts;
 		}
-		if ( typeof all_race_ids !== "undefined" ) {
-			data["all_race_ids"] = all_race_ids;
+		if ( typeof all_chambers !== "undefined" ) {
+			data["all_chambers"] = all_chambers;
 		}
-		if ( typeof races !== "undefined" ) {
-			let race_select = [];
-			races.forEach(function(race, index) {
-				let race_choice = {
-					value: race["office-id"],
-					label: race.office,
+		if ( typeof districts !== "undefined" ) {
+			let district_select = [];
+			districts.forEach(function(race, index) {
+				let district_choice = {
+					value: race["district"],
+					label: race.district,
 					group: '' // if we want to group races (ex all house races, all senate races), populate this
 				};
-				race_select.push(race_choice);
+				district_select.push(district_choice);
 			});
-			data["race_select"] = race_select;
+			data["district_select"] = district_select;
 		}
 		if ( typeof candidates !== "undefined" ) {
 			data["candidates"] = candidates;
@@ -230,10 +236,10 @@
 	the actual WP post we need to use is:
 	router.base('?p=2079676&preview=true');
 	*/
-	router.base('/elections/2022/02/whos-running-in-minnesota-in-2022');
+	//router.base('/elections/2022/02/whos-running-in-minnesota-in-2022');
 
 	let selectParty;
-	let selectOffice;
+	let selectDistrict;
 
 	// when the x is clicked, return to the main list
 	function clearSelect(event) {
@@ -242,24 +248,24 @@
 
 	let selectedParty = undefined;
 	function handlePartySelect(event) {
-		selectOffice.handleClear();
+		selectDistrict.handleClear();
 		selectedParty = event.detail;
 		router('/by-party/' + selectedParty.value);
 	}
 	
-	let selectedOffice = undefined;
-	function handleOfficeSelect(event) {
+	let selectedDistrict = undefined;
+	function handleDistrictSelect(event) {
 		selectParty.handleClear();
-		selectedOffice = event.detail;
-		router('/by-office/' + selectedOffice.value);
+		selectedDistrict = event.detail;
+		router('/by-district/' + selectedDistrict.value);
 	}
 	
-	function setSelectedOffice(params, races) {
+	function setSelectedDistrict(params, races) {
 		let selectedItem = undefined;
-		if (params && params.office) {
-			let officeObject = races.find(item => item["office-id"] === params["office"]);
-			if ( typeof officeObject !== "undefined" ) {
-				selectedItem = {value: params.office, label: officeObject.office};
+		if (params && params.district) {
+			let districtObject = districts.find(item => item["district"] === params["district"]);
+			if ( typeof districtObject !== "undefined" ) {
+				selectedItem = {value: params.district, label: districtObject.district};
 			}
 		}		
 		return selectedItem;
@@ -292,7 +298,7 @@
 				<Select value={setSelectedParty(params, items.all_party_ids, items.all_parties)} inputStyles="font-size: 1em; letter-spacing: inherit;" placeholder="Choose a party..." items={items.party_select} on:select={handlePartySelect} on:clear={clearSelect} bind:this="{selectParty}"></Select>
 			</div>
 			<div class="a-filter-select">
-				<Select value={setSelectedOffice(params, items.races)} inputStyles="font-size: 1em; letter-spacing: inherit;" placeholder="Choose a race..."  items={items.race_select} on:select={handleOfficeSelect} on:clear={clearSelect} bind:this="{selectOffice}"></Select>
+				<Select value={setSelectedDistrict(params, items.districts)} inputStyles="font-size: 1em; letter-spacing: inherit;" placeholder="Choose a district..."  items={items.district_select} on:select={handleDistrictSelect} on:clear={clearSelect} bind:this="{selectDistrict}"></Select>
 			</div>
 		</div>
 		{#if items.dropped_out_candidates.length > 0}
