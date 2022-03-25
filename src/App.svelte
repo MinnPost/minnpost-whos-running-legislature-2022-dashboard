@@ -130,9 +130,9 @@
 			candidates = active_candidates;
 		}
 
-		// create array of race ids, parties, and party ids
-		let all_chambers = [...new Set(items.candidates.map(function(item, index) {
-			if ( item["district"].indexOf("A") >= 0 || item["district"].indexOf("B") ) {
+		// create array of chambers, districts, parties, and party ids
+		let chambers = [...new Set(items.districts.map(function(item, index) {
+			if ( item["district"].indexOf("A") >= 0 || item["district"].indexOf("B") >= 0 ) {
 				return "house"
 			} else {
 				return "senate"
@@ -142,19 +142,19 @@
 		let all_parties = [...new Set(items.candidates.map(item => item.party))];
 		let all_party_ids = [...new Set(items.candidates.map(item => item["party-id"]))];
 
-		// if there are no races but there are candidates, get the key from the candidate
-		// then get the corresponding race and push it
-		// after the loop, we still need to assign races to races
+		// if there are no districts but there are candidates, get the key from the candidate
+		// then get the corresponding district and push it
+		// after the loop, we still need to assign districts to districts
 		if (districts.length === 0 && candidates.length !== 0) {
 			candidates.forEach(async function(candidate) {
 				//let candidate_race = items.races[candidate["race-key"]]
 				let candidate_district = items.districts.find(item => item["district"] === candidate["district"]);
-				races.push(candidate_district);
+				districts.push(candidate_district);
 			});
-			races = races;
+			districts = districts;
 		}
 
-		// make the final data array of races and candidates, and parties and offices, for filteredList to use and return it
+		// make the final data array of districts and candidates, and parties and offices, for filteredList to use and return it
 		let data = [];
 		data["prefilteredRaces"] = items.districts; // we need this for when there are no candidate results
 		if ( typeof all_parties !== "undefined" ) {
@@ -178,8 +178,8 @@
 		if ( typeof districts !== "undefined" ) {
 			data["districts"] = districts;
 		}
-		if ( typeof all_chambers !== "undefined" ) {
-			data["all_chambers"] = all_chambers;
+		if ( typeof chambers !== "undefined" ) {
+			data["chambers"] = chambers;
 		}
 		if ( typeof districts !== "undefined" ) {
 			let district_select = [];

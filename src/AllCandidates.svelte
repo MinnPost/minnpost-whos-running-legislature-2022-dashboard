@@ -5,32 +5,51 @@
     // the candidates from App.svelte
 	let candidates = items.candidates;
 
+    let chambers = [...new Set(candidates.map(function(item, index) {
+        if ( item["district"].indexOf("A") >= 0 || item["district"].indexOf("B") >= 0 ) {
+            return "house"
+        } else {
+            return "senate"
+        }
+    }))];
+
     // the distinct party names from the candidates
     let parties = [...new Set(candidates.map(item => item.party))];
 
-    // create a list of candidates for a party
-	let party_candidates = function(party, district) {
-		return items.candidates.filter(
-			item => item["party"] !== null && item["party"].indexOf(party) !== -1 && item["district"].indexOf(district) !== -1
-		)
+    // create a list of candidates for a chamber
+	let party_candidates = function(party, chamber) {
+        if (chamber === "house") {
+            return items.candidates.filter(
+                item => item["party"] !== null && item["party"].indexOf(party) !== -1 && (item["district"].indexOf("A") >= 0 || item["district"].indexOf("B") >= 0)
+            )
+        } else {
+            return items.candidates.filter(
+                item => item["party"] !== null && item["party"].indexOf(party) !== -1 && (item["district"].indexOf("A") === -1 && item["district"].indexOf("B") === -1)
+            )
+        }
 	}
 
-    // create a list of candidates for a district
-	let district_candidates = function(district, party = '') {
-		if ( party !== '') {
-			return items.candidates.filter(
-				item => item["district"].indexOf(district) !== -1 && item["party"].indexOf(party) !== -1
-			)
-		} else {
-			return items.candidates.filter(
-				item => item["district"].indexOf(district) !== -1
-			)
-		}
+    // create a list of candidates in their district
+	let district_candidates = function(chamber, district = '') {
+        if (district !== '') {
+            if (chamber === "house") {
+                candidates = items.candidates.filter(
+                    item => (item["district"].indexOf("A") >= 0 || item["district"].indexOf("B") >= 0) && item["district"] == district
+                ) 
+            } else {
+                candidates = items.candidates.filter(
+                    item => item["district"].indexOf("A") === -1 && item["district"].indexOf("B") === -1 && item["district"] == district
+                )
+            }
+            return candidates;
+        } else {
+            return items.candidates;
+        }
 	}
 
-    // the distinct parties from this list of candidates
-	let district_candidate_parties = function(candidates) {
-		return [...new Set(candidates.map(value => value["party"]))];
+    // the distinct districts from this list of candidates
+	let chamber_candidate_districts = function(candidates) {
+		return [...new Set(candidates.map(value => value["district"]))];
 	}
 
     // single candidate template
@@ -47,20 +66,20 @@
     </aside>
 {/if}
 
-{#each items.districts as district}
+{#each items.chambers as chamber}
     <section class="race-listing">
-        <h2 class="m-archive-header">{district.district}</h2>
-        {#if district.blurb}
-            <p>{@html district.blurb}</p>
+        <h2 class="m-archive-header">{chamber}</h2>
+        {#if chamber.blurb}
+            <p>{@html chamber.blurb}</p>
         {/if}
-        {#each district_candidate_parties(district_candidates(district["district"])) as party, key}
-            {#if party_candidates(party, district.district).length > 0}
-                <section class="m-archive m-archive-homepage m-zone m-zone-homepage-more-top candidates-list">
-                    <h3 class="m-archive-header party-{district_candidate_parties(district_candidates(district["district"]))[key].toLowerCase()}">{party}</h3>
-                    {#each party_candidates(party, district.district) as candidate}
+        {#each chamber_candidate_districts(district_candidates(chamber)) as district, key}
+            {#if district_candidates(chamber, district).length > 0}
+                <article class="m-district">
+                    {chamber} {district}
+                    {#each district_candidates(chamber, district) as candidate}
                         <Candidate candidate = {candidate} />
                     {/each}
-                </section>
+                </article>
             {/if}
         {/each}
     </section>
