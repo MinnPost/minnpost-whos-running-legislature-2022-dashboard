@@ -36,7 +36,7 @@
         }
 	}
 
-    // create a list of candidates in their district
+    // create a list of candidates in their chamber or district
 	let district_candidates = function(chamber, district = '') {
         if (district !== '') {
             if (chamber === "house") {
@@ -48,10 +48,18 @@
                     item => item["district"].indexOf("A") === -1 && item["district"].indexOf("B") === -1 && item["district"] == district
                 )
             }
-            return candidates;
         } else {
-            return items.candidates;
+            if (chamber === "house") {
+                candidates = items.candidates.filter(
+                    item => (item["district"].indexOf("A") >= 0 || item["district"].indexOf("B") >= 0)
+                ) 
+            } else {
+                candidates = items.candidates.filter(
+                    item => item["district"].indexOf("A") === -1 && item["district"].indexOf("B") === -1
+                )
+            }
         }
+        return candidates;
 	}
 
     // the distinct districts from this list of candidates
@@ -74,20 +82,24 @@
 {/if}
 
 {#each items.chambers as chamber}
-    <section class="district-listing">
-        <h2 class="m-archive-header">{chamber}</h2>
-        {#if chamber.blurb}
-            <p>{@html chamber.blurb}</p>
-        {/if}
-        {#each chamber_candidate_districts(district_candidates(chamber)) as district, key}
-            {#if district_candidates(chamber, district).length > 0}
-                <article class="m-district">
-                    {chamber} {district} {items.districts[key]["region"]}
-                    {#each district_candidates(chamber, district) as candidate}
-                        <Candidate candidate = {candidate} />
-                    {/each}
-                </article>
+    {#if district_candidates(chamber).length > 0}
+        <section class="chamber-listing">
+            <h2 class="m-archive-header m-chamber-header">{chamber}</h2>
+            {#if chamber.blurb}
+                <p>{@html chamber.blurb}</p>
             {/if}
-        {/each}
-    </section>
+            {#each chamber_candidate_districts(district_candidates(chamber)) as district, key}
+                {#if district_candidates(chamber, district).length > 0}
+                    <article class="m-district">
+                        {chamber}
+                        {#if district }{district}{/if}
+                        {#if items.districts[key] }{items.districts[key]["region"]}{/if}
+                        {#each district_candidates(chamber, district) as candidate}
+                            <Candidate candidate = {candidate} />
+                        {/each}
+                    </article>
+                {/if}
+            {/each}
+        </section>
+    {/if}
 {/each}

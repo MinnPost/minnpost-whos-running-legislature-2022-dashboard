@@ -90,7 +90,7 @@
 		for local data (if flask app is running):
 		http://0.0.0.0:5001/candidate-tracker/json/
 		*/
-		let res = await fetch(`https://s3.amazonaws.com/data.minnpost/projects/spreadsheets/1dQxzfWG1a97zRzKN3QJQnGG4H3M4KhOGoi30_E62-2o-Categories|House|Senate-custom.json`);
+		let res = await fetch(`http://0.0.0.0:5001/candidate-tracker/json/`);
 		let data = await res.json();
 		items = data
 		return items;
@@ -119,8 +119,8 @@
 	let searchTerm = '';
 	$: filteredList = dataPromise.then((r) => {
 		// filter the districts and/or candidates by the search term
-		let districts = searchResults(searchTerm, items.districts);
 		let candidates = searchResults(searchTerm, items.candidates);
+		let districts = searchResults(searchTerm, items.districts);
 
 		let active_candidates = matchResults("dropped-out?", false, candidates);
 		let dropped_out_candidates = matchResults("dropped-out?", true, candidates);
@@ -138,7 +138,7 @@
 				return "senate"
 			}
 		}))];
-		let all_districts = [...new Set(items.candidates.map(item => item["district"]))];
+		//let all_districts = [...new Set(items.candidates.map(item => item["district"]))];
 		let regions = [...new Set(items.districts.map(item => item.region))];
 		let all_parties = [...new Set(items.candidates.filter(function(item, index) {
 			if ( item.party ) {
@@ -195,26 +195,31 @@
 		}
 		if ( typeof regions !== "undefined" ) {
 			let region_select = [];
-			regions.forEach(function(region, index) {
+
+			for (var index = 0, len = regions.length; index < len; index++) {
+				var region = regions[index];
 				let region_choice = {
 					value: region,
 					label: region,
 					group: ''
 				};
 				region_select.push(region_choice);
-			});
+			}
 			data["region_select"] = region_select;
 		}
 		if ( typeof districts !== "undefined" ) {
 			let district_select = [];
-			districts.forEach(function(district, index) {
-				let district_choice = {
-					value: district["district"],
-					label: district.district,
-					group: '' // if we want to group districts (by region!), we could populate this
-				};
-				district_select.push(district_choice);
-			});
+			for (var index = 0, len = districts.length; index < len; index++) {
+				var district = districts[index];
+				if (typeof district !== "undefined") {
+					let district_choice = {
+						value: district["district"],
+						label: district["district"],
+						group: '' // if we want to group districts (by region!), we could populate this
+					};
+					district_select.push(district_choice);
+				}
+			}
 			data["district_select"] = district_select;
 		}
 		if ( typeof candidates !== "undefined" ) {
