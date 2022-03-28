@@ -55,7 +55,7 @@
 {/if}
 
 {#each parties as party, key}
-	<section class="race-listing">
+	<section class="district-listing">
 		{#if parties.length > 1}
 			<h2 class="m-archive-header party-{items.all_party_ids[key]}">{party}</h2>
 		{/if}

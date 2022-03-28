@@ -14,7 +14,14 @@
     }))];
 
     // the distinct party names from the candidates
-    let parties = [...new Set(candidates.map(item => item.party))];
+    let parties = [...new Set(
+        candidates.reduce((ids, thing) => {
+            if (thing.party !== null) {
+                return thing.party;
+            }
+            //return ids;
+            }, [])
+    )];
 
     // create a list of candidates for a chamber
 	let party_candidates = function(party, chamber) {
@@ -67,7 +74,7 @@
 {/if}
 
 {#each items.chambers as chamber}
-    <section class="race-listing">
+    <section class="district-listing">
         <h2 class="m-archive-header">{chamber}</h2>
         {#if chamber.blurb}
             <p>{@html chamber.blurb}</p>
@@ -75,7 +82,7 @@
         {#each chamber_candidate_districts(district_candidates(chamber)) as district, key}
             {#if district_candidates(chamber, district).length > 0}
                 <article class="m-district">
-                    {chamber} {district}
+                    {chamber} {district} {items.districts[key]["region"]}
                     {#each district_candidates(chamber, district) as candidate}
                         <Candidate candidate = {candidate} />
                     {/each}

@@ -55,7 +55,7 @@
 {/if}
 
 {#each races as race, key}
-	<section class="race-listing">
+	<section class="district-listing">
 		{#if race}
 			{#if races.length > 1}
 				<h2 class="m-archive-header">{race.office}</h2>

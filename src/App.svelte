@@ -1,10 +1,10 @@
 <style>
-	:global(.race-listing) {
+	:global(.district-listing) {
 		border-bottom: 1px solid #d6d6da;
 		margin-bottom: 1.5em;
 		padding-bottom: .75em;
 	}
-	:global(.race-listing:last-of-type) {
+	:global(.district-listing:last-of-type) {
 		border-bottom: none;
 		margin-bottom: 0;
 		padding-bottom: 0;
@@ -118,7 +118,7 @@
 	// create the promise result
 	let searchTerm = '';
 	$: filteredList = dataPromise.then((r) => {
-		// filter the races and/or candidates by the search term
+		// filter the districts and/or candidates by the search term
 		let districts = searchResults(searchTerm, items.districts);
 		let candidates = searchResults(searchTerm, items.candidates);
 
@@ -139,6 +139,7 @@
 			}
 		}))];
 		let all_districts = [...new Set(items.candidates.map(item => item["district"]))];
+		let regions = [...new Set(items.districts.map(item => item.region))];
 		let all_parties = [...new Set(items.candidates.map(item => item.party))];
 		let all_party_ids = [...new Set(items.candidates.map(item => item["party-id"]))];
 
@@ -147,7 +148,6 @@
 		// after the loop, we still need to assign districts to districts
 		if (districts.length === 0 && candidates.length !== 0) {
 			candidates.forEach(async function(candidate) {
-				//let candidate_race = items.races[candidate["race-key"]]
 				let candidate_district = items.districts.find(item => item["district"] === candidate["district"]);
 				districts.push(candidate_district);
 			});
@@ -156,7 +156,7 @@
 
 		// make the final data array of districts and candidates, and parties and offices, for filteredList to use and return it
 		let data = [];
-		data["prefilteredRaces"] = items.districts; // we need this for when there are no candidate results
+		data["prefilteredDistricts"] = items.districts; // we need this for when there are no candidate results
 		if ( typeof all_parties !== "undefined" ) {
 			data["all_parties"] = all_parties;
 		}
@@ -178,16 +178,31 @@
 		if ( typeof districts !== "undefined" ) {
 			data["districts"] = districts;
 		}
+		if ( typeof regions !== "undefined" ) {
+			data["regions"] = regions;
+		}
 		if ( typeof chambers !== "undefined" ) {
 			data["chambers"] = chambers;
 		}
+		if ( typeof regions !== "undefined" ) {
+			let region_select = [];
+			regions.forEach(function(region, index) {
+				let region_choice = {
+					value: region,
+					label: region,
+					group: ''
+				};
+				region_select.push(region_choice);
+			});
+			data["region_select"] = region_select;
+		}
 		if ( typeof districts !== "undefined" ) {
 			let district_select = [];
-			districts.forEach(function(race, index) {
+			districts.forEach(function(district, index) {
 				let district_choice = {
-					value: race["district"],
-					label: race.district,
-					group: '' // if we want to group races (ex all house races, all senate races), populate this
+					value: district["district"],
+					label: district.district,
+					group: '' // if we want to group districts (by region!), we could populate this
 				};
 				district_select.push(district_choice);
 			});
@@ -240,6 +255,7 @@
 
 	let selectParty;
 	let selectDistrict;
+	let selectRegion;
 
 	// when the x is clicked, return to the main list
 	function clearSelect(event) {
@@ -249,6 +265,7 @@
 	let selectedParty = undefined;
 	function handlePartySelect(event) {
 		selectDistrict.handleClear();
+		selectRegion.handleClear();
 		selectedParty = event.detail;
 		router('/by-party/' + selectedParty.value);
 	}
@@ -256,11 +273,31 @@
 	let selectedDistrict = undefined;
 	function handleDistrictSelect(event) {
 		selectParty.handleClear();
+		selectRegion.handleClear();
 		selectedDistrict = event.detail;
 		router('/by-district/' + selectedDistrict.value);
 	}
+
+	let selectedRegion = undefined;
+	function handleRegionSelect(event) {
+		selectParty.handleClear();
+		selectDistrict.handleClear();
+		selectedRegion = event.detail;
+		router('/by-region/' + selectedRegion.value);
+	}
+
+	function setSelectedRegion(params, regions) {
+		let selectedItem = undefined;
+		if (params && params.region) {
+			let region = regions.find(item => item === params["region"]);
+			if ( typeof regionObject !== "undefined" ) {
+				selectedItem = {value: params.region, label: region};
+			}
+		}		
+		return selectedItem;
+	}
 	
-	function setSelectedDistrict(params, races) {
+	function setSelectedDistrict(params, districts) {
 		let selectedItem = undefined;
 		if (params && params.district) {
 			let districtObject = districts.find(item => item["district"] === params["district"]);
@@ -286,7 +323,7 @@
 </script>
 
 <div class="m-filtering">
-	<input placeholder="Search for a candidate, party, or race" class="a-filter-search" bind:value={searchTerm} />
+	<input placeholder="Search for a candidate, party, region, or district" class="a-filter-search" bind:value={searchTerm} />
 </div>
 
 <section class="container m-zones m-homepage-zones">
@@ -298,7 +335,7 @@
 				<Select value={setSelectedParty(params, items.all_party_ids, items.all_parties)} inputStyles="font-size: 1em; letter-spacing: inherit;" placeholder="Choose a party..." items={items.party_select} on:select={handlePartySelect} on:clear={clearSelect} bind:this="{selectParty}"></Select>
 			</div>
 			<div class="a-filter-select">
-				<Select value={setSelectedDistrict(params, items.districts)} inputStyles="font-size: 1em; letter-spacing: inherit;" placeholder="Choose a district..."  items={items.district_select} on:select={handleDistrictSelect} on:clear={clearSelect} bind:this="{selectDistrict}"></Select>
+				<Select value={setSelectedRegion(params, items.regions)} inputStyles="font-size: 1em; letter-spacing: inherit;" placeholder="Choose a region..."  items={items.region_select} on:select={handleRegionSelect} on:clear={clearSelect} bind:this="{selectRegion}"></Select>
 			</div>
 		</div>
 		{#if items.dropped_out_candidates.length > 0}
