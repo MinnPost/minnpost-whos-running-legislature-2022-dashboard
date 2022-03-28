@@ -140,8 +140,17 @@
 		}))];
 		let all_districts = [...new Set(items.candidates.map(item => item["district"]))];
 		let regions = [...new Set(items.districts.map(item => item.region))];
-		let all_parties = [...new Set(items.candidates.map(item => item.party))];
-		let all_party_ids = [...new Set(items.candidates.map(item => item["party-id"]))];
+		let all_parties = [...new Set(items.candidates.filter(function(item, index) {
+			if ( item.party ) {
+				return item.party;
+			}
+		}).map(function(obj) { return obj.party; }))];
+		let all_party_ids = [...new Set(items.candidates.filter(function(item, index) {
+			if ( item["party-id"] ) {
+				return item["party-id"];
+			}
+		}).map(function(obj) { return obj["party-id"]; }))];
+		//let all_party_ids = [...new Set(items.candidates.map(item => item["party-id"]))];
 
 		// if there are no districts but there are candidates, get the key from the candidate
 		// then get the corresponding district and push it
@@ -313,7 +322,7 @@
 		if (params && params.party) {
 			let key = all_party_ids.indexOf(params.party);
 			let value = all_parties[key];
-			if ( typeof key !== "undefined" && typeof value !== "undefined" ) {
+			if ( value && typeof key !== "undefined" && typeof value !== "undefined" ) {
 				selectedItem = {value: params.party, label: all_parties[key]};
 			}
 		}		
