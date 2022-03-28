@@ -156,10 +156,11 @@
 		// then get the corresponding district and push it
 		// after the loop, we still need to assign districts to districts
 		if (districts.length === 0 && candidates.length !== 0) {
-			candidates.forEach(async function(candidate) {
+			for (var index = 0, len = candidates.length; index < len; index++) {
+				var candidate = candidates[index];
 				let candidate_district = items.districts.find(item => item["district"] === candidate["district"]);
 				districts.push(candidate_district);
-			});
+			}
 			districts = districts;
 		}
 
@@ -174,14 +175,15 @@
 		}
 		if ( typeof all_party_ids !== "undefined" && typeof all_parties !== "undefined" ) {
 			let party_select = [];
-			all_parties.forEach(function(party, index) {
+			for (var index = 0, len = all_parties.length; index < len; index++) {
+				var party = all_parties[index];
 				let party_choice = {
 					value: all_party_ids[index],
 					label: party,
 					group: '' // if we want to group parties, populate this
 				};
 				party_select.push(party_choice);
-			});
+			}
 			data["party_select"] = party_select;
 		}
 		if ( typeof districts !== "undefined" ) {
@@ -268,7 +270,7 @@
 	//router.base('/elections/2022/02/whos-running-in-minnesota-in-2022');
 
 	let selectParty;
-	let selectDistrict;
+	//let selectDistrict;
 	let selectRegion;
 
 	// when the x is clicked, return to the main list
@@ -278,24 +280,24 @@
 
 	let selectedParty = undefined;
 	function handlePartySelect(event) {
-		selectDistrict.handleClear();
+		//selectDistrict.handleClear();
 		selectRegion.handleClear();
 		selectedParty = event.detail;
 		router('/by-party/' + selectedParty.value);
 	}
 	
-	let selectedDistrict = undefined;
+	/*let selectedDistrict = undefined;
 	function handleDistrictSelect(event) {
 		selectParty.handleClear();
 		selectRegion.handleClear();
 		selectedDistrict = event.detail;
 		router('/by-district/' + selectedDistrict.value);
-	}
+	}*/
 
 	let selectedRegion = undefined;
 	function handleRegionSelect(event) {
 		selectParty.handleClear();
-		selectDistrict.handleClear();
+		//selectDistrict.handleClear();
 		selectedRegion = event.detail;
 		router('/by-region/' + selectedRegion.value);
 	}
