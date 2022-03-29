@@ -5,13 +5,9 @@
     // the candidates from App.svelte
 	let candidates = items.candidates;
 
-    let chambers = [...new Set(candidates.map(function(item, index) {
-        if ( item["district"].indexOf("A") >= 0 || item["district"].indexOf("B") >= 0 ) {
-            return "house"
-        } else {
-            return "senate"
-        }
-    }))];
+    let districts = items.districts;
+
+    let chambers = items.chambers;
 
     // the distinct party names from the candidates
     let parties = [...new Set(
@@ -41,31 +37,34 @@
         if (district !== '') {
             if (chamber === "house") {
                 candidates = items.candidates.filter(
-                    item => (item["district"].indexOf("A") >= 0 || item["district"].indexOf("B") >= 0) && item["district"] == district
+                    item => item["chamber"] == chamber && item["district"] == district
                 ) 
             } else {
                 candidates = items.candidates.filter(
-                    item => item["district"].indexOf("A") === -1 && item["district"].indexOf("B") === -1 && item["district"] == district
+                    item => item["chamber"] == chamber && item["district"] == district
                 )
             }
         } else {
             if (chamber === "house") {
                 candidates = items.candidates.filter(
-                    item => (item["district"].indexOf("A") >= 0 || item["district"].indexOf("B") >= 0)
+                    item => item["chamber"] == chamber
                 ) 
             } else {
                 candidates = items.candidates.filter(
-                    item => item["district"].indexOf("A") === -1 && item["district"].indexOf("B") === -1
+                    item => item["chamber"] == chamber
                 )
             }
         }
         return candidates;
 	}
 
-    // the distinct districts from this list of candidates
-	let chamber_candidate_districts = function(candidates) {
-		return [...new Set(candidates.map(value => value["district"]))];
-	}
+    let chamber_candidate_district_regions = function(candidates) {
+        return [...new Set(candidates.filter(function(item, index) {
+            if ( item.district && item.region ) {
+                return {"district": item.district, "region": item.region}
+            }
+        }).map(function(obj) { return {"district": obj.district, "region": obj.region} }))];
+    }
 
     // single candidate template
 	import Candidate from "./Candidate.svelte";
@@ -88,13 +87,13 @@
             {#if chamber.blurb}
                 <p>{@html chamber.blurb}</p>
             {/if}
-            {#each chamber_candidate_districts(district_candidates(chamber)) as district, key}
-                {#if district_candidates(chamber, district).length > 0}
+            {#each chamber_candidate_district_regions(district_candidates(chamber)) as district_region, key}
+                {#if district_candidates(chamber, district_region.district).length > 0}
                     <article class="m-district">
                         {chamber}
-                        {#if district }{district}{/if}
-                        {#if items.districts[key] }{items.districts[key]["region"]}{/if}
-                        {#each district_candidates(chamber, district) as candidate}
+                        {#if district_region }{district_region.district} {district_region.region}{/if}
+                        
+                        {#each district_candidates(chamber, district_region.district) as candidate}
                             <Candidate candidate = {candidate} />
                         {/each}
                     </article>

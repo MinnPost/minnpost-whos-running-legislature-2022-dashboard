@@ -120,7 +120,25 @@
 	$: filteredList = dataPromise.then((r) => {
 		// filter the districts and/or candidates by the search term
 		let candidates = searchResults(searchTerm, items.candidates);
-		let districts = searchResults(searchTerm, items.districts);
+		//let districts = [...new Set(items.candidates.map(
+		//	item => item["district"])
+		//)];
+
+		let districts = [...new Set(items.candidates.filter(function(item, index) {
+            if ( item.district && item.region && item.chamber && item.party ) {
+                return item;
+            }
+        }).map(function(obj) {
+			return {
+				"district": obj.district,
+				"region": obj.region,
+				"chamber": obj.chamber,
+				"party": obj.party
+			}
+		}))];
+
+		districts = searchResults(searchTerm, districts);
+		
 
 		let active_candidates = matchResults("dropped-out?", false, candidates);
 		let dropped_out_candidates = matchResults("dropped-out?", true, candidates);
@@ -130,16 +148,36 @@
 			candidates = active_candidates;
 		}
 
+		/*let districts = [...new Set(items.candidates.map(
+			item => item["district"])
+		)];*/
+
+		/*let districts = [...new Set(items.candidates.filter(function(item, index) {
+			if ( item.district && item.region ) {
+				return {"district": item.district, "region": item.region}
+			}
+		}).map(function(obj) { return {"district": obj.district, "region": obj.region} }))];*/
+
+		let regions = [...new Set(items.candidates.filter(function(item, index) {
+			if ( item.region ) {
+				return item.region;
+			}
+		}).map(function(obj) { return obj.region; }))];
+
 		// create array of chambers, districts, parties, and party ids
-		let chambers = [...new Set(items.districts.map(function(item, index) {
-			if ( item["district"].indexOf("A") >= 0 || item["district"].indexOf("B") >= 0 ) {
+		/*let chambers = [...new Set(districts.map(function(item, index) {
+			if ( item.indexOf("A") >= 0 || item.indexOf("B") >= 0 ) {
 				return "house"
 			} else {
 				return "senate"
 			}
-		}))];
-		//let all_districts = [...new Set(items.candidates.map(item => item["district"]))];
-		let regions = [...new Set(items.districts.map(item => item.region))];
+		}))];*/
+		let chambers = [...new Set(items.candidates.filter(function(item, index) {
+			if ( item.chamber ) {
+				return item.chamber;
+			}
+		}).map(function(obj) { return obj.chamber; }))];
+
 		let all_parties = [...new Set(items.candidates.filter(function(item, index) {
 			if ( item.party ) {
 				return item.party;
@@ -155,18 +193,27 @@
 		// if there are no districts but there are candidates, get the key from the candidate
 		// then get the corresponding district and push it
 		// after the loop, we still need to assign districts to districts
-		if (districts.length === 0 && candidates.length !== 0) {
+		/*if (districts.length === 0 && candidates.length !== 0) {
 			for (var index = 0, len = candidates.length; index < len; index++) {
 				var candidate = candidates[index];
 				let candidate_district = items.districts.find(item => item["district"] === candidate["district"]);
 				districts.push(candidate_district);
 			}
 			districts = districts;
-		}
+		}*/
+
+		/*if (regions.length === 0 && candidates.length !== 0) {
+			for (var index = 0, len = candidates.length; index < len; index++) {
+				var candidate = candidates[index];
+				let candidate_region = items.regions.find(item => item["region"] === candidate["region"]);
+				regions.push(candidate_region);
+			}
+			regions = regions;
+		}*/
 
 		// make the final data array of districts and candidates, and parties and offices, for filteredList to use and return it
 		let data = [];
-		data["prefilteredDistricts"] = items.districts; // we need this for when there are no candidate results
+		
 		if ( typeof all_parties !== "undefined" ) {
 			data["all_parties"] = all_parties;
 		}
