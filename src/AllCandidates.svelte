@@ -19,7 +19,7 @@
             }, [])
     )];
 
-    // create a list of candidates for a chamber
+    // create a list of candidates for a party and chamber
 	let party_candidates = function(party, chamber) {
         if (chamber === "house") {
             return items.candidates.filter(
@@ -59,11 +59,21 @@
 	}
 
     let chamber_candidate_district_regions = function(candidates) {
-        return [...new Set(candidates.filter(function(item, index) {
-            if ( item.district && item.region ) {
-                return {"district": item.district, "region": item.region}
+        let district_regions = candidates.reduce(function(filtered, option) {
+            if ( option.district && option.region ) {
+                var item = JSON.stringify({ "district": option.district, "region": option.region });
+                filtered.push(item);
             }
-        }).map(function(obj) { return {"district": obj.district, "region": obj.region} }))];
+            return [...new Set(filtered)];
+        }, []);
+        district_regions = district_regions.map(function(item) {
+            if (typeof item === 'string') {
+                return JSON.parse(item);
+            } else if (typeof item === 'object') {
+                return item;
+            }
+        });
+        return district_regions;
     }
 
     // single candidate template
@@ -87,13 +97,11 @@
             {#if chamber.blurb}
                 <p>{@html chamber.blurb}</p>
             {/if}
-            {#each chamber_candidate_district_regions(district_candidates(chamber)) as district_region, key}
-                {#if district_candidates(chamber, district_region.district).length > 0}
+            {#each chamber_candidate_district_regions(district_candidates(chamber)) as district, key}
+                {#if district_candidates(chamber, district.district).length > 0}
                     <article class="m-district">
-                        {chamber}
-                        {#if district_region }{district_region.district} {district_region.region}{/if}
-                        
-                        {#each district_candidates(chamber, district_region.district) as candidate}
+                        {chamber} {district.district}
+                        {#each district_candidates(chamber, district.district) as candidate}
                             <Candidate candidate = {candidate} />
                         {/each}
                     </article>
