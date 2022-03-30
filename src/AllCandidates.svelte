@@ -35,25 +35,13 @@
     // create a list of candidates in their chamber or district
 	let district_candidates = function(chamber, district = '') {
         if (district !== '') {
-            if (chamber === "house") {
-                candidates = items.candidates.filter(
-                    item => item["chamber"] == chamber && item["district"] == district
-                ) 
-            } else {
-                candidates = items.candidates.filter(
-                    item => item["chamber"] == chamber && item["district"] == district
-                )
-            }
+            candidates = items.candidates.filter(
+                item => item["chamber"] == chamber && item["district"] == district
+            );
         } else {
-            if (chamber === "house") {
-                candidates = items.candidates.filter(
-                    item => item["chamber"] == chamber
-                ) 
-            } else {
-                candidates = items.candidates.filter(
-                    item => item["chamber"] == chamber
-                )
-            }
+            candidates = items.candidates.filter(
+                item => item["chamber"] == chamber
+            );
         }
         return candidates;
 	}
@@ -97,11 +85,11 @@
             {#if chamber.blurb}
                 <p>{@html chamber.blurb}</p>
             {/if}
-            {#each chamber_candidate_district_regions(district_candidates(chamber)) as district, key}
-                {#if district_candidates(chamber, district.district).length > 0}
+            {#each chamber_candidate_district_regions(district_candidates(chamber)) as district_region, key}
+                {#if district_candidates(chamber, district_region.district).length > 0}
                     <article class="m-district">
-                        {chamber} {district.district}
-                        {#each district_candidates(chamber, district.district) as candidate}
+                        {chamber} {district_region.district} {district_region.region}
+                        {#each district_candidates(chamber, district_region.district) as candidate}
                             <Candidate candidate = {candidate} />
                         {/each}
                     </article>
