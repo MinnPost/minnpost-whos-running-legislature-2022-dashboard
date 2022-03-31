@@ -8,7 +8,7 @@
 	// what district do we want
     let districts = [];
     if (params && params.district) {
-		let key = items.districts.indexOf(params.district);
+        let key = items.districts.findIndex((item) => item.district === params.district);
 		districts = [items.districts[key]];
     } else {
         // the distinct districts from the candidates
@@ -26,23 +26,6 @@
         return candidates;
 	}
 
-    let candidate_district_regions = function(candidates) {
-        let district_regions = districts.filter(o1 => candidates.some(o2 => o1.district === o2.district));
-        district_regions = district_regions.reduce(function(filtered, option) {
-            var item = JSON.stringify(option);
-            filtered.push(item);
-            return [...new Set(filtered)];
-        }, []);
-        district_regions = district_regions.map(function(item) {
-            if (typeof item === 'string') {
-                return JSON.parse(item);
-            } else if (typeof item === 'object') {
-                return item;
-            }
-        });
-        return district_regions;
-    }
-
 	// single candidate template
 	import Candidate from "./Candidate.svelte";
 
@@ -51,16 +34,13 @@
 
 </script>
 
-
-{#each districts as district, key}
-    {#each candidate_district_regions(district_candidates(district)) as district_region, key}
-        {#if region_district_candidates(chamber, region, district_region.district).length > 0}
-            <article class="m-district">
-                {district_region.label} {district_region.region}
-                {#each region_district_candidates(chamber, region, district_region.district) as candidate}
-                    <Candidate candidate = {candidate} />
-                {/each}
-            </article>
-        {/if}
-    {/each}
+{#each districts as district_region, key}
+    {#if district_candidates(district_region.district).length > 0}
+        <article class="m-district">
+            {district_region.label} {district_region.region}
+            {#each district_candidates(district_region.district) as candidate}
+                <Candidate candidate = {candidate} />
+            {/each}
+        </article>
+    {/if}
 {/each}
