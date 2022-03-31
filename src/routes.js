@@ -1,6 +1,4 @@
 import AllCandidates from './AllCandidates.svelte'
-import ByChamber from './ByChamber.svelte'
-//import ByDistrict from './ByDistrict.svelte'
 import ByDistrict from './ByDistrict.svelte'
 import ByParty from './ByParty.svelte'
 import ByRegion from './ByRegion.svelte'
@@ -12,13 +10,6 @@ export default [
     component: AllCandidates
   },
   {
-    path: '/by-chamber',
-    component: ByChamber
-  },
-  {
-    path: '/by-chamber/:chamber',
-    component: ByChamber
-  },
     path: '/by-district',
     component: ByDistrict
   },
