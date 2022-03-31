@@ -182,27 +182,6 @@
 			return [...new Set(filtered)];
 		}, []);
 
-		// if there are no districts but there are candidates, get the key from the candidate
-		// then get the corresponding district and push it
-		// after the loop, we still need to assign districts to districts
-		/*if (districts.length === 0 && candidates.length !== 0) {
-			for (var index = 0, len = candidates.length; index < len; index++) {
-				var candidate = candidates[index];
-				let candidate_district = items.districts.find(item => item["district"] === candidate["district"]);
-				districts.push(candidate_district);
-			}
-			districts = districts;
-		}*/
-
-		/*if (regions.length === 0 && candidates.length !== 0) {
-			for (var index = 0, len = candidates.length; index < len; index++) {
-				var candidate = candidates[index];
-				let candidate_region = items.regions.find(item => item["region"] === candidate["region"]);
-				regions.push(candidate_region);
-			}
-			regions = regions;
-		}*/
-
 		// make the final data array of districts and candidates, and parties and offices, for filteredList to use and return it
 		let data = [];
 		
