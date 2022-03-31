@@ -23,11 +23,10 @@
 	}
 
     let chamber_candidate_district_regions = function(candidates) {
-        let district_regions = districts.reduce(function(filtered, option) {
-            if ( option.district && option.region ) {
-                var item = JSON.stringify(option);
-                filtered.push(item);
-            }
+        let district_regions = districts.filter(o1 => candidates.some(o2 => o1.district === o2.district));
+        district_regions = district_regions.reduce(function(filtered, option) {
+            var item = JSON.stringify(option);
+            filtered.push(item);
             return [...new Set(filtered)];
         }, []);
         district_regions = district_regions.map(function(item) {
