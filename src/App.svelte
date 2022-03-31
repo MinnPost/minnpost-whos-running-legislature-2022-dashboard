@@ -120,24 +120,19 @@
 	$: filteredList = dataPromise.then((r) => {
 		// filter the districts and/or candidates by the search term
 		let candidates = searchResults(searchTerm, items.candidates);
-		//let districts = [...new Set(items.candidates.map(
-		//	item => item["district"])
-		//)];
-
 		let districts = searchResults(searchTerm, items.candidates);
-		districts = [...new Set(districts.filter(function(item, index) {
-            if ( item.district && item.region && item.chamber && item.party ) {
-                return item;
-            }
-        }).map(function(obj) {
-			return {
-				"district": obj.district,
-				"region": obj.region,
-				"chamber": obj.chamber,
-				"party": obj.party
+		districts = districts.reduce(function(filtered, item) {
+			if ( item.district && item.region && item.chamber && item.party ) {
+				district = {
+					"district": item.district,
+					"region": item.region,
+					"chamber": item.chamber,
+					"party": item.party
+				}
+				filtered.push(item);
 			}
-		}))];
-		
+			return [...new Set(filtered)];
+		}, []);
 
 		let active_candidates = matchResults("dropped-out?", false, candidates);
 		let dropped_out_candidates = matchResults("dropped-out?", true, candidates);
@@ -147,47 +142,45 @@
 			candidates = active_candidates;
 		}
 
-		/*let districts = [...new Set(items.candidates.map(
-			item => item["district"])
-		)];*/
-
-		/*let districts = [...new Set(items.candidates.filter(function(item, index) {
-			if ( item.district && item.region ) {
-				return {"district": item.district, "region": item.region}
-			}
-		}).map(function(obj) { return {"district": obj.district, "region": obj.region} }))];*/
-
-		let regions = [...new Set(items.candidates.filter(function(item, index) {
+		let regions = items.candidates.reduce(function(filtered, item) {
 			if ( item.region ) {
-				return item.region;
+				let region = item.region;
+				filtered.push(region);
 			}
-		}).map(function(obj) { return obj.region; }))];
+			return [...new Set(filtered)];
+		}, []);
+		let region_ids = items.candidates.reduce(function(filtered, item) {
+			if ( item["region-id"] ) {
+				let party = item["region-id"];
+				filtered.push(party);
+			}
+			return [...new Set(filtered)];
+		}, []);
 
-		// create array of chambers, districts, parties, and party ids
-		/*let chambers = [...new Set(districts.map(function(item, index) {
-			if ( item.indexOf("A") >= 0 || item.indexOf("B") >= 0 ) {
-				return "house"
-			} else {
-				return "senate"
-			}
-		}))];*/
-		let chambers = [...new Set(items.candidates.filter(function(item, index) {
+		// filter chambers
+		let chambers = items.candidates.reduce(function(filtered, item) {
 			if ( item.chamber ) {
-				return item.chamber;
+				let chamber = item.chamber;
+				filtered.push(chamber);
 			}
-		}).map(function(obj) { return obj.chamber; }))];
+			return [...new Set(filtered)];
+		}, []);
 
-		let all_parties = [...new Set(items.candidates.filter(function(item, index) {
+		// filter parties
+		let all_parties = items.candidates.reduce(function(filtered, item) {
 			if ( item.party ) {
-				return item.party;
+				let party = item.party;
+				filtered.push(party);
 			}
-		}).map(function(obj) { return obj.party; }))];
-		let all_party_ids = [...new Set(items.candidates.filter(function(item, index) {
+			return [...new Set(filtered)];
+		}, []);
+		let all_party_ids = items.candidates.reduce(function(filtered, item) {
 			if ( item["party-id"] ) {
-				return item["party-id"];
+				let party = item["party-id"];
+				filtered.push(party);
 			}
-		}).map(function(obj) { return obj["party-id"]; }))];
-		//let all_party_ids = [...new Set(items.candidates.map(item => item["party-id"]))];
+			return [...new Set(filtered)];
+		}, []);
 
 		// if there are no districts but there are candidates, get the key from the candidate
 		// then get the corresponding district and push it
@@ -238,22 +231,24 @@
 		if ( typeof regions !== "undefined" ) {
 			data["regions"] = regions;
 		}
-		if ( typeof chambers !== "undefined" ) {
-			data["chambers"] = chambers;
+		if ( typeof region_ids !== "undefined" ) {
+			data["region_ids"] = region_ids;
 		}
-		if ( typeof regions !== "undefined" ) {
+		if ( typeof region_ids !== "undefined" && typeof regions !== "undefined" ) {
 			let region_select = [];
-
 			for (var index = 0, len = regions.length; index < len; index++) {
 				var region = regions[index];
 				let region_choice = {
-					value: region,
+					value: region_ids[index],
 					label: region,
 					group: ''
 				};
 				region_select.push(region_choice);
 			}
 			data["region_select"] = region_select;
+		}
+		if ( typeof chambers !== "undefined" ) {
+			data["chambers"] = chambers;
 		}
 		if ( typeof districts !== "undefined" ) {
 			let district_select = [];
@@ -348,12 +343,13 @@
 		router('/by-region/' + selectedRegion.value);
 	}
 
-	function setSelectedRegion(params, regions) {
+	function setSelectedRegion(params, region_ids, regions) {
 		let selectedItem = undefined;
 		if (params && params.region) {
-			let region = regions.find(item => item === params["region"]);
-			if ( typeof regionObject !== "undefined" ) {
-				selectedItem = {value: params.region, label: region};
+			let key = region_ids.indexOf(params.region);
+			let value = regions[key];
+			if ( value && typeof key !== "undefined" && typeof value !== "undefined" ) {
+				selectedItem = {value: params.region, label: regions[key]};
 			}
 		}		
 		return selectedItem;
@@ -397,7 +393,7 @@
 				<Select value={setSelectedParty(params, items.all_party_ids, items.all_parties)} inputStyles="font-size: 1em; letter-spacing: inherit;" placeholder="Choose a party..." items={items.party_select} on:select={handlePartySelect} on:clear={clearSelect} bind:this="{selectParty}"></Select>
 			</div>
 			<div class="a-filter-select">
-				<Select value={setSelectedRegion(params, items.regions)} inputStyles="font-size: 1em; letter-spacing: inherit;" placeholder="Choose a region..."  items={items.region_select} on:select={handleRegionSelect} on:clear={clearSelect} bind:this="{selectRegion}"></Select>
+				<Select value={setSelectedRegion(params, items.region_ids, items.regions)} inputStyles="font-size: 1em; letter-spacing: inherit;" placeholder="Choose a region..."  items={items.region_select} on:select={handleRegionSelect} on:clear={clearSelect} bind:this="{selectRegion}"></Select>
 			</div>
 		</div>
 		{#if items.dropped_out_candidates.length > 0}
