@@ -40,7 +40,7 @@
         return candidates;
 	}
 
-    let party_chamber_candidate_district_regions = function(candidates, party = '') {
+    let party_chamber_candidate_district_regions = function(candidates) {
         let district_regions = candidates.reduce(function(filtered, option) {
             if ( option.district && option.region ) {
                 var item = JSON.stringify({ "district": option.district, "region": option.region });
@@ -81,7 +81,7 @@
 					{#if chamber.blurb}
 						<p>{@html chamber.blurb}</p>
 					{/if}
-					{#each party_chamber_candidate_district_regions(party_district_candidates(chamber, party), party) as district_region, key}
+					{#each party_chamber_candidate_district_regions(party_district_candidates(chamber, party)) as district_region, key}
 						{#if party_district_candidates(chamber, party, district_region.district).length > 0}
 							<article class="m-district">
 								{chamber} {district_region.district} {district_region.region}
