@@ -128,7 +128,7 @@
 					"region": item.region,
 					"chamber": item.chamber,
 					"party": item.party,
-					"label": item.chamber[0].toUpperCase() + item.chamber.slice(1).concat(' ', (item.district[0] == "0") ? item.district.substring(1) : item.district)
+					"label": item.chamber[0].toUpperCase() + item.chamber.slice(1).concat(' District ', (item.district[0] == "0") ? item.district.substring(1) : item.district)
 				}
 				filtered.push(district);
 			}
