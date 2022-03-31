@@ -5,33 +5,6 @@
     // the candidates from App.svelte
 	let candidates = items.candidates;
 
-    let districts = items.districts;
-
-    let chambers = items.chambers;
-
-    // the distinct party names from the candidates
-    let parties = [...new Set(
-        candidates.reduce((ids, thing) => {
-            if (thing.party !== null) {
-                return thing.party;
-            }
-            //return ids;
-            }, [])
-    )];
-
-    // create a list of candidates for a party and chamber
-	let party_candidates = function(party, chamber) {
-        if (chamber === "house") {
-            return items.candidates.filter(
-                item => item["party"] !== null && item["party"].indexOf(party) !== -1 && (item["district"].indexOf("A") >= 0 || item["district"].indexOf("B") >= 0)
-            )
-        } else {
-            return items.candidates.filter(
-                item => item["party"] !== null && item["party"].indexOf(party) !== -1 && (item["district"].indexOf("A") === -1 && item["district"].indexOf("B") === -1)
-            )
-        }
-	}
-
     // create a list of candidates in their chamber or district
 	let district_candidates = function(chamber, district = '') {
         if (district !== '') {

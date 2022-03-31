@@ -5,9 +5,6 @@
 	// page.js data, such as the party we want
 	export let params;
 
-	// the races from App.svelte
-	let districts = items.districts;
-
 	// what party/parties do we want
     let parties = [];
     if (params && params.party) {
@@ -18,42 +15,40 @@
 	    parties = items.all_parties;
     }
 
-	// create a list of candidates for a party
+    // the candidates from App.svelte
+	let candidates = items.candidates;
+
+    // create a list of candidates in their chamber or district
 	let party_district_candidates = function(chamber, party = '', district = '') {
-
-		/*let all_parties = [...new Set(items.candidates.filter(function(item, index) {
-			if ( item.party ) {
-				return item.party;
-			}
-		}).map(function(obj) { return obj.party; }))];*/
-
-		if (district != '') {
-			return items.candidates.filter(
-				function(item, index) {
-					if (item.party) {
-						if ( item["chamber"] === chamber && item["party"].indexOf(party) !== -1 && item["district"] == district ) {
-							return item;
-						}
-					}
-				}
-			)
-		} else {
-			return items.candidates.filter(
-				function(item, index) {
-					if (item.party) {
-						if ( item["chamber"] === chamber &&item["party"].indexOf(party) !== -1 && item["district"] == district ) {
-							return item;
-						}
-					}
-				}
-			)
-		}
+        if (district !== '') {
+            candidates = items.candidates.filter(
+                item => item["chamber"] == chamber && item["district"] == district
+            );
+        } else {
+            candidates = items.candidates.filter(
+                item => item["chamber"] == chamber
+            );
+        }
+        return candidates;
 	}
 
-	// the distinct districts from this list of candidates
-	let party_candidate_districts = function(candidates) {
-		return [...new Set(candidates.map(value => value["district"]))];
-	}
+    let party_chamber_candidate_district_regions = function(candidates, party = '') {
+        let district_regions = candidates.reduce(function(filtered, option) {
+            if ( option.district && option.region ) {
+                var item = JSON.stringify({ "district": option.district, "region": option.region });
+                filtered.push(item);
+            }
+            return [...new Set(filtered)];
+        }, []);
+        district_regions = district_regions.map(function(item) {
+            if (typeof item === 'string') {
+                return JSON.parse(item);
+            } else if (typeof item === 'object') {
+                return item;
+            }
+        });
+        return district_regions;
+    }
 
 	// single candidate template
 	import Candidate from "./Candidate.svelte";
@@ -72,24 +67,24 @@
 		{/if}
 
 		{#each items.chambers as chamber}
-			<section class="chamber-listing">
-				<h2 class="m-archive-header m-chamber-header">{chamber}</h2>
-				{#if chamber.blurb}
-					<p>{@html chamber.blurb}</p>
-				{/if}
-		
-				{#each districts as district_region, key}
-					{#if party_district_candidates(chamber, party, district_region.district).length > 0}
-						<article class="m-district">
-							{district_region.chamber} {district_region.district} {district_region.region}
-							<h3 class="m-archive-header">{district_region.district}</h3>
-							{#each party_district_candidates(chamber, party, district_region.district) as candidate}
-								<Candidate candidate = {candidate} />
-							{/each}
-						</article>
-					{/if}	
-				{/each}
-			</section>
+			{#if party_district_candidates(chamber, party).length > 0}
+				<section class="chamber-listing">
+					<h2 class="m-archive-header m-chamber-header">{chamber}</h2>
+					{#if chamber.blurb}
+						<p>{@html chamber.blurb}</p>
+					{/if}
+					{#each party_chamber_candidate_district_regions(party_district_candidates(chamber, party), party) as district_region, key}
+						{#if party_district_candidates(chamber, party, district_region.district).length > 0}
+							<article class="m-district">
+								{chamber} {district_region.district} {district_region.region}
+								{#each party_district_candidates(chamber, party, district_region.district) as candidate}
+									<Candidate candidate = {candidate} />
+								{/each}
+							</article>
+						{/if}
+					{/each}
+				</section>
+			{/if}
 		{/each}
 	</section>
 {/each}
