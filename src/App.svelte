@@ -124,7 +124,8 @@
 		//	item => item["district"])
 		//)];
 
-		let districts = [...new Set(items.candidates.filter(function(item, index) {
+		let districts = searchResults(searchTerm, items.candidates);
+		districts = [...new Set(districts.filter(function(item, index) {
             if ( item.district && item.region && item.chamber && item.party ) {
                 return item;
             }
@@ -136,8 +137,6 @@
 				"party": obj.party
 			}
 		}))];
-
-		districts = searchResults(searchTerm, districts);
 		
 
 		let active_candidates = matchResults("dropped-out?", false, candidates);
