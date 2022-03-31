@@ -29,6 +29,14 @@
                 item => item["chamber"] == chamber
             );
         }
+		if (party != '') {
+			candidates = candidates.reduce(function(filtered, option) {
+				if ( option.party && option.party === party ) {
+					filtered.push(option);
+				}
+				return [...new Set(filtered)];
+			}, []);
+		}
         return candidates;
 	}
 
