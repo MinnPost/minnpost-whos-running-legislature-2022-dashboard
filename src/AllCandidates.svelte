@@ -5,6 +5,9 @@
     // the candidates from App.svelte
 	let candidates = items.candidates;
 
+    // the districts from App.svelte
+    let districts = items.districts;
+
     // create a list of candidates in their chamber or district
 	let district_candidates = function(chamber, district = '') {
         if (district !== '') {
@@ -20,9 +23,9 @@
 	}
 
     let chamber_candidate_district_regions = function(candidates) {
-        let district_regions = candidates.reduce(function(filtered, option) {
+        let district_regions = districts.reduce(function(filtered, option) {
             if ( option.district && option.region ) {
-                var item = JSON.stringify({ "district": option.district, "region": option.region });
+                var item = JSON.stringify(option);
                 filtered.push(item);
             }
             return [...new Set(filtered)];
@@ -61,7 +64,7 @@
             {#each chamber_candidate_district_regions(district_candidates(chamber)) as district_region, key}
                 {#if district_candidates(chamber, district_region.district).length > 0}
                     <article class="m-district">
-                        {chamber} {district_region.district} {district_region.region}
+                        {district_region.label} {district_region.region}
                         {#each district_candidates(chamber, district_region.district) as candidate}
                             <Candidate candidate = {candidate} />
                         {/each}

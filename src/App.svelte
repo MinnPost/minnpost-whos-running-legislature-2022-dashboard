@@ -127,9 +127,10 @@
 					"district": item.district,
 					"region": item.region,
 					"chamber": item.chamber,
-					"party": item.party
+					"party": item.party,
+					"label": item.chamber[0].toUpperCase() + item.chamber.slice(1).concat(' ', (item.district[0] == "0") ? item.district.substring(1) : item.district)
 				}
-				filtered.push(item);
+				filtered.push(district);
 			}
 			return [...new Set(filtered)];
 		}, []);
@@ -206,6 +207,17 @@
 		}
 		if ( typeof districts !== "undefined" ) {
 			data["districts"] = districts;
+			let district_select = [];
+			for (var index = 0, len = districts.length; index < len; index++) {
+				var district = districts[index];
+				let district_choice = {
+					value: district.district,
+					label: district.label,
+					group: '' // if we want to group districts, populate this
+				};
+				district_select.push(district_choice);
+			}
+			data["district_select"] = district_select;
 		}
 		if ( typeof regions !== "undefined" ) {
 			data["regions"] = regions;
@@ -228,21 +240,6 @@
 		}
 		if ( typeof chambers !== "undefined" ) {
 			data["chambers"] = chambers;
-		}
-		if ( typeof districts !== "undefined" ) {
-			let district_select = [];
-			for (var index = 0, len = districts.length; index < len; index++) {
-				var district = districts[index];
-				if (typeof district !== "undefined") {
-					let district_choice = {
-						value: district["district"],
-						label: district["district"],
-						group: '' // if we want to group districts (by region!), we could populate this
-					};
-					district_select.push(district_choice);
-				}
-			}
-			data["district_select"] = district_select;
 		}
 		if ( typeof candidates !== "undefined" ) {
 			data["candidates"] = candidates;
