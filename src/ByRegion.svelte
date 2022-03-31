@@ -2,7 +2,7 @@
     // all data for candidates and races
     export let items;
 
-	// page.js data, such as the party we want
+	// page.js data, such as the region we want
 	export let params;
 
 	// what region do we want

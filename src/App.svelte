@@ -286,7 +286,7 @@
 	//router.base('/elections/2022/02/whos-running-in-minnesota-in-2022');
 
 	let selectParty;
-	//let selectDistrict;
+	let selectDistrict;
 	let selectRegion;
 
 	// when the x is clicked, return to the main list
@@ -296,24 +296,24 @@
 
 	let selectedParty = undefined;
 	function handlePartySelect(event) {
-		//selectDistrict.handleClear();
+		selectDistrict.handleClear();
 		selectRegion.handleClear();
 		selectedParty = event.detail;
 		router('/by-party/' + selectedParty.value);
 	}
 	
-	/*let selectedDistrict = undefined;
+	let selectedDistrict = undefined;
 	function handleDistrictSelect(event) {
 		selectParty.handleClear();
 		selectRegion.handleClear();
 		selectedDistrict = event.detail;
 		router('/by-district/' + selectedDistrict.value);
-	}*/
+	}
 
 	let selectedRegion = undefined;
 	function handleRegionSelect(event) {
 		selectParty.handleClear();
-		//selectDistrict.handleClear();
+		selectDistrict.handleClear();
 		selectedRegion = event.detail;
 		router('/by-region/' + selectedRegion.value);
 	}
@@ -369,6 +369,9 @@
 			</div>
 			<div class="a-filter-select">
 				<Select value={setSelectedRegion(params, items.region_ids, items.regions)} inputStyles="font-size: 1em; letter-spacing: inherit;" placeholder="Choose a region..."  items={items.region_select} on:select={handleRegionSelect} on:clear={clearSelect} bind:this="{selectRegion}"></Select>
+			</div>
+			<div class="a-filter-select">
+				<Select value={setSelectedDistrict(params, items.districts)} inputStyles="font-size: 1em; letter-spacing: inherit;" placeholder="Choose a district..."  items={items.district_select} on:select={handleDistrictSelect} on:clear={clearSelect} bind:this="{selectDistrict}"></Select>
 			</div>
 		</div>
 		{#if items.dropped_out_candidates.length > 0}
