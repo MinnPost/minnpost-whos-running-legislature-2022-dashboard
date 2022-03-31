@@ -31,6 +31,7 @@ let showMap = false;
 
   .candidates-listing {
     padding: .5em 0;
+    display: flex;
   }
 </style>
 
@@ -39,12 +40,12 @@ let showMap = false;
   <h5>{district_region.region}</h5>
   &mdash;
   {#if showMap}
-    <small><a href="{null}" on:click="{() => showMap = false}">Hide map</a></small>
+    <small><a href="#" on:click|preventDefault="{() => showMap = false}">Hide map</a></small>
     <div class="map-container">
       <Map district={district_region.district}/>
     </div>
   {:else}
-    <small><a href="{null}" on:click="{() => showMap = true}">Show map</a></small>
+    <small><a href="#" on:click|preventDefault="{() => showMap = true}">Show on map</a></small>
   {/if}
   <div class="candidates-listing">
   {#each candidates as candidate}

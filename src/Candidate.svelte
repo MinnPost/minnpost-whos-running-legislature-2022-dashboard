@@ -4,7 +4,8 @@
 		padding: 0.5em;
 		border-radius: 4px;
 		display: block;
-		width: 100%;
+		width: auto;
+		margin-right: 0.75em;
 	}
 
 	.m-entry-excerpt {
@@ -37,6 +38,7 @@
 		font-size: var(--scale-2);
 		font-family: "ff-meta-web-pro", helvetica, arial, sans-serif;
 		color: #5E6E76;
+		width: 100%;
 	}
 
 	.candidate-meta div {
@@ -104,12 +106,9 @@
 		{/if}
 	</div>
 	
-	{#if candidate.blurb}
-	<div class="m-entry-excerpt blurb">
-		<p>{@html candidate.blurb}</p>
-		{#if candidate.website}
+	{#if candidate.website}
+		<div class="m-entry-excerpt website">
 			<p><a href="{candidate.website}" target="_blank"><i class="fas fa-fw fa-globe"></i> Campaign website</a></p>
-		{/if}
-	</div>
+		</div>
 	{/if}
 </article>
