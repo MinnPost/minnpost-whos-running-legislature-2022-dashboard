@@ -122,13 +122,13 @@
 		let candidates = searchResults(searchTerm, items.candidates);
 		let districts = searchResults(searchTerm, items.candidates);
 		districts = districts.reduce(function(filtered, item) {
-            if ( item.district && item.region && item.chamber && item.party ) {
+			if ( item.district && item.region && item.chamber && item.party ) {
 				district = {
 					"district": item.district,
 					"region": item.region,
 					"chamber": item.chamber,
 					"party": item.party
-            }
+				}
 				filtered.push(item);
 			}
 			return [...new Set(filtered)];
