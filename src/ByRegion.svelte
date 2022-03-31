@@ -61,7 +61,7 @@
     }
 
 	// single candidate template
-	import Candidate from "./Candidate.svelte";
+	import Race from "./Race.svelte";
 
 	// link to go back to unfiltered list
     //import LinkToFullCandidateList from "./components/LinkToFullCandidateList.svelte";
@@ -85,12 +85,7 @@
 					{/if}
 					{#each region_chamber_candidate_district_regions(region_district_candidates(chamber, region)) as district_region, key}
 						{#if region_district_candidates(chamber, region, district_region.district).length > 0}
-							<article class="m-district">
-								{district_region.label} {district_region.region}
-								{#each region_district_candidates(chamber, region, district_region.district) as candidate}
-									<Candidate candidate = {candidate} />
-								{/each}
-							</article>
+							<Race district_region={district_region} candidates={region_district_candidates(chamber, region, district_region.district)} />
 						{/if}
 					{/each}
 				</section>

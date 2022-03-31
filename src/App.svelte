@@ -44,7 +44,7 @@
 		width: 100%;
 	}
 	.a-filter-select {
-		width: 47.4576271186%;
+		width: 32.2033898305%;
 	}
 
 	@media screen and (max-width: 50em) {
