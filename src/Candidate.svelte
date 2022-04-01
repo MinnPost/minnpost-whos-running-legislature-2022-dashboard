@@ -88,21 +88,21 @@
 	<div class="m-entry-meta candidate-meta">
 		<div class="party-name party-{candidate["party-id"]}"><i class="fas fa-fw fa-{party_icons[candidate["party-id"]] ?? "circle"}"></i> {candidate.party}</div>
 
-		{#if candidate.hometown}
-		<div class="hometown"><i class="fas fa-fw fa-home"></i> Lives in: {candidate.hometown}</div>
+		{#if candidate["lives-in"]}
+		<div class="hometown"><i class="fas fa-fw fa-home"></i> Lives in: {candidate["lives-in"]}</div>
 		{/if}
 
-		{#if candidate.incumbent}
+		{#if candidate["incumbent?"]}
 		<div class="incumbent"><i class="fas fa-fw fa-star"></i> Incumbent</div>
 		{/if}
 
-		{#if candidate.endorsed}
+		{#if candidate["endorsed?"]}
 		<div class="endorsed"><span class="icon party-{candidate["party-id"]}"><i class="fas fa-fw fa-check-square"></i></span> 
 			Endorsed by <span class="party-{candidate["party-id"]}">{candidate.party} {#if candidate.party != "DFL"} Party{/if}</span></div>
 		{/if}
 
-		{#if candidate["dropped-out"]}
-		<div class="dropped-out"><span class="icon"><i class="fas fa-fw fa-times"></i></span> Out of the race on {parseDropoutDate(candidate["date-dropped-out"])}</div>
+		{#if candidate["dropped-out?"]}
+		<div class="dropped-out"><span class="icon"><i class="fas fa-fw fa-times"></i></span> Out of the race on {parseDropoutDate(candidate["drop-out-date"])}</div>
 		{/if}
 	</div>
 	
