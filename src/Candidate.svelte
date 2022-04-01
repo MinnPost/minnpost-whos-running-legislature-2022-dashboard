@@ -93,7 +93,7 @@
 		{/if}
 
 		{#if candidate["incumbent?"]}
-		<div class="incumbent"><i class="fas fa-fw fa-star"></i> Incumbent</div>
+		<div class="incumbent"><i class="fas fa-fw fa-star"></i> Incumbent {#if candidate["year-first-elected"]} since {candidate["year-first-elected"]}{/if}</div>
 		{/if}
 
 		{#if candidate["endorsed?"]}
