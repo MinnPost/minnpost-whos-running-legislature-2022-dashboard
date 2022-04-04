@@ -343,7 +343,7 @@
 		if (params && params.district) {
 			let districtObject = districts.find(item => item["district"] === params["district"]);
 			if ( typeof districtObject !== "undefined" ) {
-				selectedItem = {value: params.district, label: districtObject.district};
+				selectedItem = {value: params.district, label: districtObject.label};
 			}
 		}		
 		return selectedItem;
