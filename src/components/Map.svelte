@@ -32,6 +32,7 @@
 
 
   let map;
+  let mapReady = false;
 
   async function createMap(container) {
     map = new L.Map(container, mapDefaults);
@@ -49,6 +50,7 @@
 
     let response =  await fetch(`` + url);
     let boundary = await response.json();
+    mapReady = true;
     let layer = L.geoJson(boundary);
     layer.setStyle(districtStyle);
     map.addLayer(layer);
@@ -67,9 +69,26 @@
     height: 100%;
     width: 100%;
   }
+
+  .loading {
+    font-size: 2em;
+		font-family: "ff-meta-web-pro", helvetica, arial, sans-serif;
+    background-color: #ffffff;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 9999;
+    display: inline;
+    padding: .5em;
+    border-radius: .5em;
+  }
+
 </style>
 <link href='https://api.mapbox.com/mapbox.js/v3.3.1/mapbox.css' rel='stylesheet' />
 
 <svelte:window on:resize={resizeMap} />
 
-<div class="map" use:createMap></div>
+<div class="map" use:createMap>
+  {#if !mapReady }<div class="loading">Loading map&#133;</div>{/if}
+</div>
