@@ -35,11 +35,9 @@
 
 	.incumbent {color: #f74607;}
 	.first-elected {
-		/* display: block; */
 		color: #5E6E76;
 		padding-left:1.5em;
 		font-weight: 400;
-		/* font-style: italic; */
 	}
 	.dropped-out .icon {color: #C83D2D;}
 	.deg45 {
