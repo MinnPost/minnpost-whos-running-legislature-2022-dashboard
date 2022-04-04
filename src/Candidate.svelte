@@ -4,7 +4,7 @@
 		padding: 0.5em;
 		border-radius: 4px;
 		display: block;
-		width: auto;
+		width: 33%;
 		margin-right: 0.75em;
 	}
 
@@ -16,26 +16,14 @@
 		opacity: 0.6;
 	}
 
-	.candidate h4 {
-		margin-top: 0;
-	}
-	.candidate p {
-		margin-bottom: 0.75em;
-	}
-
 	.candidate-photo {
 		float: right;
-	}
-
-	.candidate-photo img {
-		max-width: 130px;
-		border-radius: 50%;
 	}
 
 	.candidate-meta {
 		font-weight: 700;
 		margin-bottom: 0.25em;
-		font-size: var(--scale-2);
+		font-size: var(--scale-3);
 		font-family: "ff-meta-web-pro", helvetica, arial, sans-serif;
 		color: #5E6E76;
 		width: 100%;
@@ -46,6 +34,13 @@
 	}
 
 	.incumbent {color: #f74607;}
+	.first-elected {
+		/* display: block; */
+		color: #5E6E76;
+		padding-left:1.5em;
+		font-weight: 400;
+		/* font-style: italic; */
+	}
 	.dropped-out .icon {color: #C83D2D;}
 	.deg45 {
 		transform: rotate(45deg);
@@ -55,7 +50,7 @@
 </style>
 
 <script>
-	// a single candidate record from AllCandidates.svelte, ByOffice.svelte, or ByParty.svelte
+	// a single candidate record from Race.svelte
 	export let candidate;
 
 	const party_icons = {
@@ -72,18 +67,16 @@
 		return date.toLocaleString('en-US', options);
 	}
 
+	function capString(s) {
+		return s.charAt(0).toUpperCase() + s.slice(1);
+	}
+
 
 </script>
 
 <article class="m-post candidate" class:former-candidate={candidate["dropped-out"]}>
 	
-	{#if candidate["headshot-url"]}
-		<figure class="candidate-photo">
-			<img src="{candidate['headshot-url']}" alt="photo of {candidate.name}" width=130 height=130 loading=lazy />
-		</figure>
-	{/if}
-	
-	<h4 class="a-entry-title">{candidate.name}</h4>
+	<h5 class="a-entry-title">{candidate.name}</h5>
 
 	<div class="m-entry-meta candidate-meta">
 		{#if candidate["party"]}
@@ -95,7 +88,14 @@
 		{/if}
 
 		{#if candidate["incumbent?"]}
-		<div class="incumbent"><i class="fas fa-fw fa-star"></i> Incumbent {#if candidate["year-first-elected"]} since {candidate["year-first-elected"]}{/if}</div>
+		<div class="incumbent">
+			<i class="fas fa-fw fa-star"></i> Member of {capString(candidate.chamber)}
+			{#if candidate["year-first-elected"]}
+			<div class="first-elected">
+				First elected in {candidate["year-first-elected"]}
+			</div>
+			{/if}
+		</div>
 		{/if}
 
 		{#if candidate["endorsed?"]}
@@ -103,14 +103,14 @@
 			Endorsed by <span class="party-{candidate["party-id"]}">{candidate.party} {#if candidate.party != "DFL"} Party{/if}</span></div>
 		{/if}
 
+		{#if candidate.website}
+			<div class="website"><a href="{candidate.website}" target="_blank"><i class="fas fa-fw fa-globe"></i> Campaign website</a></div>
+		{/if}
+
 		{#if candidate["dropped-out?"]}
 		<div class="dropped-out"><span class="icon"><i class="fas fa-fw fa-times"></i></span> Out of the race on {parseDropoutDate(candidate["drop-out-date"])}</div>
 		{/if}
 	</div>
 	
-	{#if candidate.website}
-		<div class="m-entry-excerpt website">
-			<p><a href="{candidate.website}" target="_blank"><i class="fas fa-fw fa-globe"></i> Campaign website</a></p>
-		</div>
-	{/if}
+
 </article>
