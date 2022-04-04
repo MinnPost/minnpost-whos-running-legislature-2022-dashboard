@@ -1,11 +1,33 @@
 <style>
 	.candidate {
 		border: 1px solid #d6d6da;
-		padding: 0.5em;
+		padding: 0.5em 0.25em;
 		border-radius: 4px;
 		display: block;
-		width: 33%;
-		margin-right: 0.75em;
+		width: 100%;
+		margin-right: 0.25em;
+		margin-bottom: 0.5em;
+	}
+
+	@media screen and (min-width: 30em) {
+		.candidate {
+			width: 48.275862069%;
+		}
+	}
+
+	@media screen and (min-width: 30em) and (max-width: 50em) {
+		.candidate:nth-child(2n) {
+			margin-right: 0;
+		}
+	}
+
+	@media screen and (min-width: 50em) {
+		.candidate {
+			width: 32.2033898305%;
+		}
+		.candidate:nth-child(3n) {
+			margin-right: 0;
+		}
 	}
 
 	.m-entry-excerpt {

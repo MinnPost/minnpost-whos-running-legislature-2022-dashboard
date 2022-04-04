@@ -32,11 +32,6 @@ let showMap = false;
     margin-bottom: .75em;
   }
 
-  .candidates-listing {
-    padding: .5em 0;
-    display: flex;
-  }
-
   button {
     background-color: #ffffff;
     border: 1px solid #D6D6DA;
@@ -49,7 +44,7 @@ let showMap = false;
 
 </style>
 
-<article class="m-district">
+<section class="m-district">
   <h3>{district_region.label}</h3>
   <h5>{district_region.region}</h5>
   {#if showMap}
@@ -65,4 +60,4 @@ let showMap = false;
     <Candidate candidate = {candidate} />
   {/each}
   </div>
-</article>
+</section>

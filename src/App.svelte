@@ -1,4 +1,9 @@
 <style>
+	/*
+	23.7288135593%
+	32.2033898305%
+	48.275862069%
+	*/
 	:global(.district-listing) {
 		border-bottom: 1px solid #d6d6da;
 		margin-bottom: 1.5em;
@@ -9,13 +14,15 @@
 		margin-bottom: 0;
 		padding-bottom: 0;
 	}
-	:global(.candidates-list) {
+	:global(.candidates-listing) {
     	display: flex;
     	flex-wrap: wrap;
+		margin-top: 0.5em;
 		margin-bottom: 1.5em;
-		justify-content: space-between;
+		justify-content: flex-start;
+		
   	}
-	:global(.candidates-list h3, .candidates-list h4) {
+	:global(.candidates-listing h3, .candidates-listing h4) {
 		width: 100%;
 		/*margin-bottom: 0.25em;*/
 	}
@@ -43,16 +50,17 @@
 	.a-filter-search {
 		width: 100%;
 	}
+	
 	.a-filter-select {
-		width: 32.2033898305%;
+		width: 100%;
+		margin-bottom: 0.75em;
 	}
 
-	@media screen and (max-width: 50em) {
+	@media screen and (min-width: 50em) {
 		.a-filter-select {
-			width: 100%;
-			margin-bottom: 0.25em;
+			width: 32.2033898305%;
 		}
-  }
+	}
 
 	.a-filter-switch {
 		display: flex;
