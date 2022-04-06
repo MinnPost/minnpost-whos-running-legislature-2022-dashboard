@@ -47,10 +47,6 @@
     
 </script>
 
-<style>
-    .m-chamber-header {text-transform: capitalize;}
-</style>
-
 {#if items["searchTerm"] != ""}
     <aside class="m-search-result-info">
         Showing {items.candidates.length} {#if items.candidates.length == 1}candidate{:else}candidates{/if} in {items.districts.length} {#if items.districts.length == 1}district{:else}districts{/if} for <strong>{items["searchTerm"]}</strong>.

@@ -40,6 +40,7 @@
 	:global(.party-legal-marijuana-now) {color: #286806;}
 	:global(.party-grassroots-legalize-cannabis) {color: #41AB07;}
 	:global(.party-green) {color: #07AB20;}
+    :global(.m-chamber-header) {text-transform: capitalize;}
 
 	.m-filtering {
 		display: flex;
@@ -59,6 +60,12 @@
 	@media screen and (min-width: 50em) {
 		.a-filter-select {
 			width: 32.2033898305%;
+		}
+	}
+
+	@media screen and (min-width: 60em) and (max-width: 80em) {
+		.a-filter-select {
+			font-size: var(--scale-2);
 		}
 	}
 
