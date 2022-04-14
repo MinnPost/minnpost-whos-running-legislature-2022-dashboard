@@ -144,10 +144,19 @@
 					"chamber": item.chamber,
 					"label": item.chamber[0].toUpperCase() + item.chamber.slice(1).concat(' District ', (item.district[0] == "0") ? item.district.substring(1) : item.district)
 				}
+				district = JSON.stringify(district);
 				filtered.push(district);
 			}
 			return [...new Set(filtered)];
 		}, []);
+
+		districts = districts.map(function(item) {
+            if (typeof item === 'string') {
+                return JSON.parse(item);
+            } else if (typeof item === 'object') {
+                return item;
+            }
+        });
 
 		let active_candidates = matchResults("dropped-out?", false, candidates);
 		let dropped_out_candidates = matchResults("dropped-out?", true, candidates);
