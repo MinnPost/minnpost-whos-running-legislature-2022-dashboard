@@ -69,14 +69,14 @@
 		}
 	}
 
-	.a-filter-switch {
+	/*.a-filter-switch {
 		display: flex;
 		justify-content: flex-end;
 		font-size: var(--scale-3);
 	}
 	.a-switch-toggle {
 		cursor: pointer;
-	}
+	}*/
 </style>
 
 <script>
@@ -88,7 +88,7 @@
 	import Select from 'svelte-select';
 
 	// the Svelte toggle switch
-	import Switch from './components/Switch.svelte';
+	//import Switch from './components/Switch.svelte';
 
 	// current result set
 	let results;
