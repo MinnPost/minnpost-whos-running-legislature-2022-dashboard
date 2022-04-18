@@ -99,18 +99,47 @@
 	// remote data
 	let items = []
 	async function getData() {
-		/*
-		for actual 2022 data:
-		https://s3.amazonaws.com/data.minnpost/projects/spreadsheets/1dQxzfWG1a97zRzKN3QJQnGG4H3M4KhOGoi30_E62-2o-Categories|House|Senate-custom.json
-		for local data (if flask app is running):
-		http://0.0.0.0:5001/candidate-tracker/json/
-		*/
-		let res = await fetch(`https://s3.amazonaws.com/data.minnpost/projects/spreadsheets/1dQxzfWG1a97zRzKN3QJQnGG4H3M4KhOGoi30_E62-2o-Categories|House|Senate-custom.json`);
-		let data = await res.json();
-		items = data
-		return items;
+
+		items = getCachedResults("items");
+		if (items == "") {
+			/*
+			for actual 2022 data:
+			https://s3.amazonaws.com/data.minnpost/projects/spreadsheets/1dQxzfWG1a97zRzKN3QJQnGG4H3M4KhOGoi30_E62-2o-Categories|House|Senate-custom.json
+			for local data (if flask app is running):
+			http://0.0.0.0:5001/candidate-tracker/json/
+			*/
+			let res = await fetch(`https://s3.amazonaws.com/data.minnpost/projects/spreadsheets/1dQxzfWG1a97zRzKN3QJQnGG4H3M4KhOGoi30_E62-2o-Categories|House|Senate-custom.json`);
+			let data = await res.json();
+			items = setCacheResults("items", data)
+			//items = data
+			return items;
+		} else {
+			return items;
+		}
+
 	}
     const dataPromise = getData();
+
+	function getCachedResults(key) {
+		var cachelife = 5000;
+		var cacheddata = localStorage.getItem(key);
+		if (cacheddata) {
+			cacheddata = JSON.parse(cacheddata);
+			var expired = parseInt(Date.now() / 1000) - cacheddata.cachetime > cachelife;
+		}
+		// If cached data available and not expired return them. 
+		if (cacheddata && ! expired) {
+			return cacheddata.data;
+		} else {
+			return '';
+		}
+	}
+
+	function setCacheResults(key, data) {
+		var json = {data: data, cachetime: parseInt(Date.now() / 1000)}
+		localStorage.setItem(key, JSON.stringify(json));
+		return data;
+	}
 
 	// this method allows us to specify keys that should not be searched and then search the results
 	function searchResults(searchTerm, data) {
@@ -134,29 +163,37 @@
 	let searchTerm = '';
 	$: filteredList = dataPromise.then((r) => {
 		// filter the districts and/or candidates by the search term
-		let candidates = searchResults(searchTerm, items.candidates);
-		let districts = searchResults(searchTerm, items.candidates);
-		districts = districts.reduce(function(filtered, item) {
-			if ( item.district && item.region && item.chamber && item.party ) {
-				district = {
-					"district": item.district,
-					"region": item.region,
-					"chamber": item.chamber,
-					"label": item.chamber[0].toUpperCase() + item.chamber.slice(1).concat(' District ', (item.district[0] == "0") ? item.district.substring(1) : item.district)
-				}
-				district = JSON.stringify(district);
-				filtered.push(district);
-			}
-			return [...new Set(filtered)];
-		}, []);
+		let candidates = getCachedResults("candidates");
+		if (candidates == "") {
+			candidates = searchResults(searchTerm, items.candidates);
+		}
 
-		districts = districts.map(function(item) {
-            if (typeof item === 'string') {
-                return JSON.parse(item);
-            } else if (typeof item === 'object') {
-                return item;
-            }
-        });
+		let districts = getCachedResults("districts");
+		if (districts == "") {
+			districts = searchResults(searchTerm, items.candidates);
+			districts = districts.reduce(function(filtered, item) {
+				if ( item.district && item.region && item.chamber && item.party ) {
+					district = {
+						"district": item.district,
+						"region": item.region,
+						"chamber": item.chamber,
+						"label": item.chamber[0].toUpperCase() + item.chamber.slice(1).concat(' District ', (item.district[0] == "0") ? item.district.substring(1) : item.district)
+					}
+					district = JSON.stringify(district);
+					filtered.push(district);
+				}
+				return [...new Set(filtered)];
+			}, []);
+
+			districts = districts.map(function(item) {
+				if (typeof item === 'string') {
+					return JSON.parse(item);
+				} else if (typeof item === 'object') {
+					return item;
+				}
+			});
+			districts = setCacheResults("districts", districts);
+		}
 
 		candidates = matchResults("dropped-out?", false, candidates);
 		/* the performance on this is just bad
