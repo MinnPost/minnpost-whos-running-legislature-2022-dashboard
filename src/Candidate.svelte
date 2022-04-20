@@ -100,16 +100,16 @@
 
 	<div class="m-entry-meta candidate-meta">
 		{#if candidate["party"]}
-			<div class="party-name party-{candidate["party-id"]}"><i class="fas fa-fw fa-{party_icons[candidate["party-id"]] ?? "circle"}"></i> {candidate.party}</div>
+			<div class="party-name party-{candidate["party-id"]}"> {candidate.party}</div>
 		{/if}
 
 		{#if candidate["lives-in"]}
-		<div class="hometown"><i class="fas fa-fw fa-home"></i> Lives in: {candidate["lives-in"]}</div>
+		<div class="hometown"> Lives in: {candidate["lives-in"]}</div>
 		{/if}
 
 		{#if candidate["incumbent?"]}
 		<div class="incumbent">
-			<i class="fas fa-fw fa-star"></i> Member of {capString(candidate.chamber)}
+			 Member of {capString(candidate.chamber)}
 			{#if candidate["year-first-elected"]}
 			<div class="first-elected">
 				First elected in {candidate["year-first-elected"]}
@@ -119,16 +119,16 @@
 		{/if}
 
 		{#if candidate["endorsed?"]}
-		<div class="endorsed"><span class="icon party-{candidate["party-id"]}"><i class="fas fa-fw fa-check-square"></i></span> 
+		<div class="endorsed"><span class="icon party-{candidate["party-id"]}"></span> 
 			Endorsed by <span class="party-{candidate["party-id"]}">{candidate.party} {#if candidate.party != "DFL"} Party{/if}</span></div>
 		{/if}
 
 		{#if candidate.website}
-			<div class="website"><a href="{candidate.website}" target="_blank"><i class="fas fa-fw fa-globe"></i> Campaign website</a></div>
+			<div class="website"><a href="{candidate.website}" target="_blank"> Campaign website</a></div>
 		{/if}
 
 		{#if candidate["dropped-out?"]}
-		<div class="dropped-out"><span class="icon"><i class="fas fa-fw fa-times"></i></span> Out of the race on {parseDropoutDate(candidate["drop-out-date"])}</div>
+		<div class="dropped-out"><span class="icon"></span> Out of the race on {parseDropoutDate(candidate["drop-out-date"])}</div>
 		{/if}
 	</div>
 	

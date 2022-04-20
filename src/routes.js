@@ -8,7 +8,7 @@ export default [
   {
     path: '/',
     component: AllCandidates
-  },
+  }/*,
   {
     path: '/by-district',
     component: ByDistrict
@@ -32,5 +32,5 @@ export default [
   {
     path: '/by-region/:region',
     component: ByRegion
-  }
+  }*/
 ]
