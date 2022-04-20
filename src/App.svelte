@@ -35,11 +35,51 @@
 	:global(.party-name) {
 		color: #869298;
 	}
+
+	:global(.party-name:before) {
+		border-radius: 50%;
+		align-items: center;
+		color: #fff;
+		background-color: #869298;
+		font-weight: 700;
+		margin-right: 0.25em;		
+		height: 1.25em;
+		width: 1.25em;
+		display: inline-flex;
+		justify-content: center;
+		flex: 0 0 auto;
+	}
+
 	:global(.party-dfl) {color: #0793AB;}
+	:global(.party-dfl-icon:before) {
+		content: "D";
+		background: #0793AB;
+	}
+
 	:global(.party-republican) {color: #A1000F}
+	:global(.party-republican-icon:before) {
+		content: "R";
+		background: #A1000F;
+	}
+
 	:global(.party-legal-marijuana-now) {color: #286806;}
+	:global(.party-legal-marijuana-icon:before) {
+		content: "L";
+		background: #286806;
+	}
+
 	:global(.party-grassroots-legalize-cannabis) {color: #41AB07;}
+	:global(.party-grassroots-legalize-cannabis-icon:before) {
+		content: "G";
+		background: #41AB07;
+	}
+
 	:global(.party-green) {color: #07AB20;}
+	:global(.party-green-icon:before) {
+		content: "G";
+		background: #07AB20;
+	}
+
     :global(.m-chamber-header) {text-transform: capitalize;}
 
 	.m-filtering {
