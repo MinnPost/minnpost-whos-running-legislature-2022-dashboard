@@ -109,14 +109,14 @@
 		}
 	}
 
-	/*.a-filter-switch {
+	.a-filter-switch {
 		display: flex;
 		justify-content: flex-end;
 		font-size: var(--scale-3);
 	}
 	.a-switch-toggle {
 		cursor: pointer;
-	}*/
+	}
 </style>
 
 <script>
@@ -128,7 +128,7 @@
 	import Select from 'svelte-select';
 
 	// the Svelte toggle switch
-	//import Switch from './components/Switch.svelte';
+	import Switch from './components/Switch.svelte';
 
 	// current result set
 	let results;
@@ -198,15 +198,15 @@
             }
         });
 
-		candidates = matchResults("dropped-out?", false, candidates);
-		/* the performance on this is just bad
+		//candidates = matchResults("dropped-out?", false, candidates);
+		/* the performance on this is just bad */
 		let active_candidates = matchResults("dropped-out?", false, candidates);
 		let dropped_out_candidates = matchResults("dropped-out?", true, candidates);
 		if (showDroppedOutCandidates == true) {
 			candidates = active_candidates.concat(dropped_out_candidates);
 		} else {
 			candidates = active_candidates;
-		}*/
+		}
 
 		let regions = items.candidates.reduce(function(filtered, item) {
 			if ( item.region ) {
@@ -440,6 +440,14 @@
 				<Select value={setSelectedDistrict(params, items.districts)} inputStyles="font-size: 1em; letter-spacing: inherit;" placeholder="Choose a district..."  items={items.district_select} on:select={handleDistrictSelect} on:clear={clearSelect} bind:this="{selectDistrict}"></Select>
 			</div>
 		</div>
+
+		{#if items.dropped_out_candidates.length > 0}
+			<div class="a-filter-switch">
+				<Switch bind:checked={showDroppedOutCandidates} id="show-dropped-out-candidates"></Switch> <label class="a-switch-toggle show-dropped-out-candidates" for="show-dropped-out-candidates"><small class="a-form-caption">Show candidates who are no longer running</small></label>
+			</div>
+		{/if}
+
+
 
 		{#key params}
 			<svelte:component this={results} params="{params}" items="{items}" />
